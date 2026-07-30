@@ -58,3 +58,7 @@ async def get_dashboard_stats():
         sentiment_distribution=pipeline.sentiment_stats,
         chatbot_usage=pipeline.chatbot_usage_count
     )
+
+@app.get("/api/status")
+async def get_api_status():
+    return {"status": "ok"}
