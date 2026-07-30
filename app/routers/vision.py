@@ -25,6 +25,26 @@ async def recognize_face(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
+@router.post("/register-face")
+async def register_face(name: str, file: UploadFile = File(...)):
+    """Uploads a portrait image and registers it with the specified name in the face database."""
+    try:
+        contents = await file.read()
+        nparr = np.frombuffer(contents, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if img is None:
+            raise HTTPException(status_code=400, detail="Invalid image file encoding.")
+        
+        success = pipeline.face_recognizer.register_face(name, img)
+        if not success:
+            raise HTTPException(status_code=400, detail="No face detected in the image. Please upload a clear portrait.")
+            
+        return {"success": True, "message": f"Successfully registered face for '{name}'."}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
 @router.post("/classify-product", response_model=ProductClassificationResponse)
 async def classify_product(file: UploadFile = File(...)):
     """Uploads a product image and classifies it into one of the 10 Fashion-MNIST categories."""

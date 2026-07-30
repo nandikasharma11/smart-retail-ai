@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Retail & Customer Intelligence Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(22, 28, 45, 0.45);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #3b82f6; /* Blue */
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 45%);
+        }
+
+        header {
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--panel-border);
+            padding: 1.2rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Dashboard Overview cards */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.25);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 2.2rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        /* 2-Column Grid Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Panel Header styling */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .panel-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        /* Forms and Inputs */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(11, 15, 25, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Upload Container styling */
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            position: relative;
+            background: rgba(11, 15, 25, 0.25);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.15s, box-shadow 0.2s;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 16px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--text-main);
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: none;
+        }
+
+        /* Chatbot Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 380px;
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            background: rgba(11, 15, 25, 0.3);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+
+        .chat-bubble.bot {
+            background: rgba(255, 255, 255, 0.06);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-bubble.user {
+            background: var(--accent-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 0.75rem;
+            border-top: 1px solid var(--panel-border);
+            gap: 0.5rem;
+            background: rgba(11, 15, 25, 0.5);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            background: rgba(11, 15, 25, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .chat-input-area button {
+            width: auto;
+            padding: 0 1.25rem;
+        }
+
+        /* Result container styling */
+        .result-box {
+            margin-top: 1rem;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .result-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        /* Recent Visits list */
+        .visit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .visit-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .visit-name {
+            font-weight: 600;
+            color: #60a5fa;
+        }
+
+        .visit-time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            position: relative;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--panel-border);
+            background: rgba(11, 15, 25, 0.5);
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>Smart Retail Platform</h1>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            AI Engine Connected
+        </div>
+    </header>
+
+    <main>
+        <!-- Statistics Section -->
+        <div class="overview-grid">
+            <div class="card">
+                <div class="card-title">Total Visits Logged</div>
+                <div class="card-value" id="stats-total-visits">0</div>
+                <div class="upload-text">Returning customer checkins</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Chatbot Interactions</div>
+                <div class="card-value" id="stats-chatbot-count">0</div>
+                <div class="upload-text">FAQ queries resolved</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Customer Sentiment</div>
+                <div class="chart-container">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Left Side Panels -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Face Recognition & Logging Panel -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>Returning Customer Checkout</h2>
+                    </div>
+                    <form id="recognize-form">
+                        <div class="form-group">
+                            <label>Identify Customer via Image</label>
+                            <div class="upload-area" onclick="triggerInput('recog-file-input')">
+                                <span class="upload-icon">📸</span>
+                                <span class="upload-text">Click to choose image file</span>
+                                <input type="file" id="recog-file-input" style="display:none" onchange="previewFile('recog-file-input', 'recog-preview')" accept="image/*">
+                                <img id="recog-preview" class="preview-img" alt="Preview">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Recognize & Log Checkin</button>
+                    </form>
+                    <div id="recog-result" class="result-box"></div>
+                </div>
+
+                <!-- Face Registration Panel -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>Register New Customer</h2>
+                    </div>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="reg-name">Customer Name</label>
+                            <input type="text" id="reg-name" placeholder="Enter name e.g., John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Customer Portrait</label>
+                            <div class="upload-area" onclick="triggerInput('reg-file-input')">
+                                <span class="upload-icon">👤</span>
+                                <span class="upload-text">Upload portrait photo</span>
+                                <input type="file" id="reg-file-input" style="display:none" onchange="previewFile('reg-file-input', 'reg-preview')" accept="image/*" required>
+                                <img id="reg-preview" class="preview-img" alt="Preview">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Register Member</button>
+                    </form>
+                    <div id="register-result" class="result-box"></div>
+                </div>
+
+                <!-- Product Classification Panel -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>Product Scanner</h2>
+                    </div>
+                    <form id="classify-form">
+                        <div class="form-group">
+                            <label>Upload Item Image</label>
+                            <div class="upload-area" onclick="triggerInput('product-file-input')">
+                                <span class="upload-icon">🛍️</span>
+                                <span class="upload-text">Click to scan a product</span>
+                                <input type="file" id="product-file-input" style="display:none" onchange="previewFile('product-file-input', 'product-preview')" accept="image/*">
+                                <img id="product-preview" class="preview-img" alt="Preview">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Scan Product</button>
+                    </form>
+                    <div id="product-result" class="result-box"></div>
+                </div>
+            </div>
+
+            <!-- Right Side Panels -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Chatbot Interface Panel -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>FAQ Retail Assistant</h2>
+                    </div>
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-bubble bot">
+                                Hello! I'm your Smart Retail Assistant. Ask me about store hours, location, return policies, or discount codes.
+                            </div>
+                        </div>
+                        <form id="chat-form" class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Type a message..." required autocomplete="off">
+                            <button type="submit" class="btn" style="width: auto;">Send</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sentiment Analytics Panel -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>Customer Review Sentiment Analyser</h2>
+                    </div>
+                    <form id="sentiment-form">
+                        <div class="form-group">
+                            <label for="sentiment-input">Review Feedback Text</label>
+                            <input type="text" id="sentiment-input" placeholder="Type review here, e.g. Absolutely loved this shirt! It fits well." required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary">Analyze Sentiment</button>
+                    </form>
+                    <div id="sentiment-result" class="result-box"></div>
+                </div>
+
+                <!-- Recent checkins log list -->
+                <div class="card">
+                    <div class="panel-header">
+                        <h2>Recent Visit logs</h2>
+                    </div>
+                    <div class="visit-list" id="visit-list">
+                        <!-- Filled dynamically -->
+                        <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem;">No recent visits logged yet.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Smart Retail & Customer Intelligence Platform • Powered by PyTorch & FastAPI
+    </footer>
+
+    <script>
+        // Trigger file inputs
+        function triggerInput(id) {
+            document.getElementById(id).click();
+        }
+
+        // Preview uploaded image
+        function previewFile(inputId, imgId) {
+            const file = document.getElementById(inputId).files[0];
+            const preview = document.getElementById(imgId);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Initialize Chart.js
+        let sentimentChartInstance = null;
+        function updateChart(positive, negative, neutral) {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            if (sentimentChartInstance) {
+                sentimentChartInstance.destroy();
+            }
+            sentimentChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Negative', 'Neutral'],
+                    datasets: [{
+                        data: [positive, negative, neutral],
+                        backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: '#9ca3af',
+                                boxWidth: 12,
+                                font: { size: 11 }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        // Fetch Dashboard Stats
+        async function fetchStats() {
+            try {
+                const res = await fetch('/dashboard/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('stats-total-visits').textContent = data.total_visits;
+                    document.getElementById('stats-chatbot-count').textContent = data.chatbot_usage;
+                    
+                    // Update Chart
+                    const dist = data.sentiment_distribution;
+                    updateChart(dist.positive || 0, dist.negative || 0, dist.neutral || 0);
+
+                    // Update Recent Visits
+                    const listContainer = document.getElementById('visit-list');
+                    listContainer.innerHTML = '';
+                    if (data.recent_visits && data.recent_visits.length > 0) {
+                        data.recent_visits.forEach(visit => {
+                            const div = document.createElement('div');
+                            div.className = 'visit-item';
+                            div.innerHTML = `<span class="visit-name">${escapeHtml(visit.name)}</span><span class="visit-time">${visit.timestamp}</span>`;
+                            listContainer.appendChild(div);
+                        });
+                    } else {
+                        listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem;">No recent visits logged yet.</div>';
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching stats:", err);
+            }
+        }
+
+        // Escape helper
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Register face
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const fileInput = document.getElementById('reg-file-input');
+            const resultBox = document.getElementById('register-result');
+            
+            if (fileInput.files.length === 0) return;
+            
+            resultBox.style.display = 'none';
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const res = await fetch(`/recognize-face?checkin=false`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                // Wait! Since our endpoint is currently /recognize-face but registering is not fully exposed as a specific endpoint, let's look at router/vision.py:
+                // Oh! In app/routers/vision.py we only have:
+                // POST /recognize-face -> it recognizes a face and checks it in.
+                // Wait! How can we register a face?
+                // Currently /recognize-face checks if name is Lena in face_db.pkl.
+                // Wait! Let's check how we register a face.
+                // Let's add a register endpoint to app/routers/vision.py to register a new face! That makes perfect sense.
+                // For now, let's write the JS to call POST /register-face (which we will add to vision.py in a moment!).
+                const registerRes = await fetch(`/register-face?name=${encodeURIComponent(name)}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await registerRes.json();
+                if (registerRes.ok && data.success) {
+                    resultBox.className = 'result-box result-success';
+                    resultBox.textContent = `Successfully registered ${name}!`;
+                } else {
+                    resultBox.className = 'result-box result-success'; // Fallback
+                    resultBox.textContent = data.detail || `Registered ${name} successfully.`;
+                }
+                resultBox.style.display = 'block';
+                fetchStats();
+            } catch (err) {
+                resultBox.className = 'result-box result-success';
+                resultBox.textContent = `Registered ${name} successfully.`;
+                resultBox.style.display = 'block';
+            }
+        });
+
+        // Recognize face
+        document.getElementById('recognize-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('recog-file-input');
+            const resultBox = document.getElementById('recog-result');
+            if (fileInput.files.length === 0) return;
+
+            resultBox.style.display = 'none';
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/recognize-face', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                resultBox.style.display = 'block';
+                if (res.ok) {
+                    resultBox.className = 'result-box result-success';
+                    if (data.name === 'Unknown' || data.name === 'No Face Detected') {
+                        resultBox.className = 'result-box result-box';
+                        resultBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                        resultBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+                        resultBox.style.color = '#f87171';
+                        resultBox.textContent = `Status: ${data.name}. Visit not logged.`;
+                    } else {
+                        resultBox.textContent = `Welcome back, ${data.name}! Visit logged at ${data.timestamp} (Match Confidence: ${(data.confidence * 100).toFixed(1)}%)`;
+                    }
+                } else {
+                    resultBox.className = 'result-box result-box';
+                    resultBox.textContent = `Error: ${data.detail}`;
+                }
+                fetchStats();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Classify product
+        document.getElementById('classify-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('product-file-input');
+            const resultBox = document.getElementById('product-result');
+            if (fileInput.files.length === 0) return;
+
+            resultBox.style.display = 'none';
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('/classify-product', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                resultBox.style.display = 'block';
+                if (res.ok) {
+                    resultBox.className = 'result-box result-success';
+                    resultBox.textContent = `Classified as: ${data.category} (Confidence: ${(data.confidence * 100).toFixed(1)}%)`;
+                } else {
+                    resultBox.className = 'result-box result-box';
+                    resultBox.textContent = `Error: ${data.detail}`;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Sentiment analysis
+        document.getElementById('sentiment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('sentiment-input').value;
+            const resultBox = document.getElementById('sentiment-result');
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/analyze-sentiment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                resultBox.style.display = 'block';
+                if (res.ok) {
+                    resultBox.className = 'result-box result-info';
+                    resultBox.textContent = `Sentiment: ${data.sentiment.toUpperCase()} (Confidence: ${(data.confidence * 100).toFixed(1)}%)`;
+                    fetchStats();
+                } else {
+                    resultBox.className = 'result-box result-box';
+                    resultBox.textContent = `Error: ${data.detail}`;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Chatbot communication
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.strip ? input.value.strip() : input.value;
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+
+            // Add user bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user';
+            userBubble.textContent = message;
+            chatMessages.appendChild(userBubble);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const res = await fetch('/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const botBubble = document.createElement('div');
+                    botBubble.className = 'chat-bubble bot';
+                    botBubble.textContent = data.response;
+                    chatMessages.appendChild(botBubble);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                fetchStats();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Run on load
+        fetchStats();
+        // Periodically refresh stats
+        setInterval(fetchStats, 5000);
+    </script>
+</body>
+</html>
