@@ -1,0 +1,104 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["hello", "hi", "hey", "is anyone there", "good day", "greetings", "whats up"],
+      "responses": ["Hello! Welcome to Smart Retail. How can I help you today?", "Hi there! How can I assist you today?", "Hey! Hope you are having a great day. What can I do for you?"]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["bye", "goodbye", "see you later", "talk to you later", "exit", "quit", "stop"],
+      "responses": ["Goodbye! Thank you for shopping with us.", "See you later! Have a wonderful day.", "Bye! Feel free to reach out if you need anything else."]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["thank you", "thanks", "thank you so much", "that was helpful", "awesome, thanks"],
+      "responses": ["You are welcome! Happy to help.", "My pleasure! Let me know if you need anything else.", "Anytime! Have a great day!"]
+    },
+    {
+      "tag": "store_hours",
+      "patterns": ["what are your hours", "when are you open", "store hours", "opening times", "closing time"],
+      "responses": ["Our store is open from 9:00 AM to 9:00 PM, Monday through Saturday. Sunday hours are 10:00 AM to 6:00 PM."]
+    },
+    {
+      "tag": "location",
+      "patterns": ["where are you located", "store location", "where is the store", "find store", "address"],
+      "responses": ["Our main flagship store is located at 123 Retail Ave, Suite 100, New York, NY 10001."]
+    },
+    {
+      "tag": "return_policy",
+      "patterns": ["how do i return", "return policy", "returns", "exchange product", "can i return this", "return window"],
+      "responses": ["We offer a 30-day return policy for all unused items in their original packaging. Please bring your receipt or order confirmation."]
+    },
+    {
+      "tag": "order_status",
+      "patterns": ["where is my order", "track my package", "order status", "delivery status", "check order"],
+      "responses": ["To track your order, please log into your account and view the orders page, or provide your order ID to our support agent."]
+    },
+    {
+      "tag": "payment_methods",
+      "patterns": ["how can i pay", "payment methods", "accept credit card", "accept apple pay", "cash on delivery", "do you accept paypal"],
+      "responses": ["We accept Visa, Mastercard, American Express, Apple Pay, Google Pay, and PayPal. Cash is accepted in stores."]
+    },
+    {
+      "tag": "shipping_time",
+      "patterns": ["how long does shipping take", "delivery time", "shipping duration", "when will it arrive"],
+      "responses": ["Standard shipping takes 3-5 business days. Express shipping takes 1-2 business days. International shipping takes 7-14 business days."]
+    },
+    {
+      "tag": "shipping_cost",
+      "patterns": ["shipping cost", "delivery fee", "is shipping free", "how much for delivery"],
+      "responses": ["Standard shipping is free for all orders over $50. Otherwise, standard shipping is $4.99 and express is $9.99."]
+    },
+    {
+      "tag": "cancel_order",
+      "patterns": ["cancel my order", "how to cancel order", "stop shipping", "order cancellation"],
+      "responses": ["You can cancel your order within 1 hour of placing it by visiting the order history section of your account or contacting support."]
+    },
+    {
+      "tag": "refund_status",
+      "patterns": ["when will i get my refund", "refund status", "refund delay", "did you refund my money"],
+      "responses": ["Once we receive and inspect your returned item, refunds are processed within 5-7 business days to your original payment method."]
+    },
+    {
+      "tag": "contact_support",
+      "patterns": ["how to contact support", "customer service", "phone number", "email address", "speak to human"],
+      "responses": ["You can reach our customer support at support@smartretail.com or by calling 1-800-555-RETAIL (Monday to Friday, 9am-5pm EST)."]
+    },
+    {
+      "tag": "loyalty_program",
+      "patterns": ["loyalty program", "rewards program", "membership points", "how to get discounts"],
+      "responses": ["Join our Smart Loyalty Program to earn 1 point for every $1 spent. Redeem points for discount vouchers and exclusive access!"]
+    },
+    {
+      "tag": "gift_cards",
+      "patterns": ["buy gift card", "do you have gift cards", "redeem gift voucher"],
+      "responses": ["Yes, we sell both physical and digital gift cards starting at $10. You can purchase them on our website or at checkout in-store."]
+    },
+    {
+      "tag": "sizing_chart",
+      "patterns": ["size guide", "size chart", "what size should i get", "tshirt sizing"],
+      "responses": ["Our comprehensive sizing chart for apparel and footwear is available on the website at smartretail.com/size-guide."]
+    },
+    {
+      "tag": "stock_availability",
+      "patterns": ["is this item in stock", "out of stock", "when will it restock", "availability"],
+      "responses": ["Stock levels are updated in real-time on our product pages. You can also sign up for email alerts when an item is restocked."]
+    },
+    {
+      "tag": "discount_codes",
+      "patterns": ["coupon code", "promo code", "discounts", "any offers today", "sale"],
+      "responses": ["Use code WELCOME10 for 10% off your first order! Keep an eye on our newsletter for seasonal sales and promo codes."]
+    },
+    {
+      "tag": "job_openings",
+      "patterns": ["are you hiring", "careers", "job openings", "work with you", "apply for job"],
+      "responses": ["We are always looking for talent! View our open corporate and retail positions at smartretail.com/careers and apply online."]
+    },
+    {
+      "tag": "feedback",
+      "patterns": ["give feedback", "complaint", "submit review", "write feedback"],
+      "responses": ["We value your feedback! Please send your suggestions, reviews, or complaints to feedback@smartretail.com to help us improve."]
+    }
+  ]
+}
