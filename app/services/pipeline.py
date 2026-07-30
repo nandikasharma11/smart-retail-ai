@@ -10,6 +10,8 @@ class UnifiedPipeline:
         self.product_classifier = ProductClassifier()
         self.sentiment_analyzer = SentimentAnalyzer()
         self.chatbot = ChatbotService()
+        self.sentiment_stats = {"positive": 0, "negative": 0, "neutral": 0}
+        self.chatbot_usage_count = 0
         print("Unified ML Pipeline initialized successfully. All models loaded.")
 
 # Singleton instance for global import
