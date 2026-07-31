@@ -8,7 +8,9 @@ client = TestClient(app)
 def test_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert "message" in response.json()
+    assert "text/html" in response.headers.get("content-type", "")
+    assert "Smart Retail" in response.text
+
 
 def test_analyze_sentiment():
     # Test positive sentiment
